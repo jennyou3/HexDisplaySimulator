@@ -18,8 +18,14 @@ def change_hexagon_color(event):
 
     if hexagon_tags:
         hexagon_tag = hexagon_tags[0]
-        canvas.itemconfig(hexagon_tag, fill="red")
-        clicked_hexagons[hexagon_tag] = 1  # Update the clicked state in the list
+        current_fill = canvas.itemcget(hexagon_tag, "fill")
+        
+        if current_fill == "red":
+            canvas.itemconfig(hexagon_tag, fill="")
+            clicked_hexagons[hexagon_tag] = 0
+        else:
+            canvas.itemconfig(hexagon_tag, fill="red")
+            clicked_hexagons[hexagon_tag] = 1  # Update the clicked state in the list
 
 def get_clicked_state_string():
     # Convert the list of clicked states into a string
