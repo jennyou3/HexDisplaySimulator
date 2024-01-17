@@ -64,7 +64,16 @@ def main():
 
 def print_clicked_state():
     clicked_state_string = get_clicked_state_string()
-    print(clicked_state_string)
+    substring_array = []
+
+    # Iterate through the long string with a step size of 8
+    for i in range(0, len(clicked_state_string), 8):
+        # Extract a substring of size 8 and append it to the array
+        substring = clicked_state_string[i:i+8]
+        substring_array.append(substring)
+
+    # Print the resulting array
+    print(substring_array)
 
 if __name__ == "__main__":
     clicked_hexagons = {}  # Dictionary to store clicked state of each hexagon
