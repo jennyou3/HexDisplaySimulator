@@ -29,7 +29,16 @@ def change_hexagon_color(event):
 
 def get_clicked_state_string():
     # Convert the list of clicked states into a string
-    return ''.join(str(clicked_hexagons.get(tag, 0)) for tag in (clicked_hexagons))
+    return ''.join(str(clicked_hexagons.get(tag, 0)) for tag in clicked_hexagons)
+
+def save_state_to_file():
+    clicked_state_string = get_clicked_state_string()
+    substring_array = [clicked_state_string[i:i+8] for i in range(0, len(clicked_state_string), 8)]
+
+    # Write substring array to a text file
+    with open("board_state.txt", "w") as file:
+        for substring in substring_array:
+            file.write(substring + '\n')
 
 def main():
     root = tk.Tk()
@@ -62,24 +71,11 @@ def main():
 
     canvas.bind("<Button-1>", change_hexagon_color)
 
-    # Add a button to print the clicked state string
-    button = tk.Button(root, text="Print Clicked State", command=print_clicked_state)
-    button.pack()
+    # Add a button to save the current state to a file
+    save_button = tk.Button(root, text="Save State to File", command=save_state_to_file)
+    save_button.pack()
 
     root.mainloop()
-
-def print_clicked_state():
-    clicked_state_string = get_clicked_state_string()
-    substring_array = []
-
-    # Iterate through the long string with a step size of 8
-    for i in range(0, len(clicked_state_string), 8):
-        # Extract a substring of size 8 and append it to the array
-        substring = clicked_state_string[i:i+8]
-        substring_array.append(substring)
-
-    # Print the resulting array
-    print(substring_array)
 
 if __name__ == "__main__":
     clicked_hexagons = {}  # Dictionary to store clicked state of each hexagon
