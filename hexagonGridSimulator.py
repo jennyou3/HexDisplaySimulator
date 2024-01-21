@@ -37,6 +37,10 @@ def save_state_to_file():
 
     # Write substring array to a text file
     with open("board_state.txt", "w") as file:
+        file.write("Name: "  + '\n')
+        file.write("Order: " + '\n')
+        file.write('\n')
+        file.write("Mask: " + '\n')
         for substring in substring_array:
             file.write(substring + '\n')
 
