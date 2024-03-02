@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+import os
 
 def draw_mini_hexagon(canvas, x, y, size, tag):
     angle = 60
@@ -20,27 +21,31 @@ def change_hexagon_color(event):
         hexagon_tag = hexagon_tags[0]
         current_fill = canvas.itemcget(hexagon_tag, "fill")
         
-        if current_fill == "red":
+        if current_fill == "hotpink":
             canvas.itemconfig(hexagon_tag, fill="")
             clicked_hexagons[hexagon_tag] = 0
         else:
-            canvas.itemconfig(hexagon_tag, fill="red")
-            clicked_hexagons[hexagon_tag] = 1  # Update the clicked state in the list
+            canvas.itemconfig(hexagon_tag, fill="hotpink")
+            clicked_hexagons[hexagon_tag] = 1  
 
 def get_clicked_state_string():
-    # Convert the list of clicked states into a string
     return ''.join(str(clicked_hexagons.get(tag, 0)) for tag in clicked_hexagons)
 
 def save_state_to_file():
+    name = input("Enter the name: ")
+    order = input("Enter the order: ")
+    file_name = input("Enter the desired file name (without extension): ")
+    
     clicked_state_string = get_clicked_state_string()
     substring_array = [clicked_state_string[i:i+8] for i in range(0, len(clicked_state_string), 8)]
 
-    # Write substring array to a text file
-    with open("board_state.txt", "w") as file:
-        file.write("Name: "  + '\n')
-        file.write("Order: " + '\n')
-        file.write('\n')
-        file.write("Mask: " + '\n')
+    mask_folder_path = "masks"
+    file_path = os.path.join(mask_folder_path, f"{file_name}.txt")
+    with open(file_path, "w") as file:
+        file.write(f"Name: {name}\n")
+        file.write(f"Order: {order}\n")
+        file.write("\n")
+        file.write("Mask:\n")
         for substring in substring_array:
             file.write(substring + '\n')
 
@@ -68,19 +73,18 @@ def main():
             tag = f"hexagon_{count}_{j}"
             draw_mini_hexagon(canvas, x_starts, mini_hexagon_y, mini_hexagon_size, tag)
             mini_hexagon_y += 20
-            clicked_hexagons[tag] = 0  # Initialize clicked state to 0
+            clicked_hexagons[tag] = 0  
 
         x_starts += 17
         count += 1
 
     canvas.bind("<Button-1>", change_hexagon_color)
 
-    # Add a button to save the current state to a file
     save_button = tk.Button(root, text="Save State to File", command=save_state_to_file)
     save_button.pack()
 
     root.mainloop()
 
 if __name__ == "__main__":
-    clicked_hexagons = {}  # Dictionary to store clicked state of each hexagon
+    clicked_hexagons = {}  
     main()
