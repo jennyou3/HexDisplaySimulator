@@ -10,19 +10,17 @@ head = """\
 
 typedef const uint8_t mask_array_t;
 typedef const struct {
+  const mask_array_t *mask_array;
+  const char *name;
   const uint8_t height; 
   const uint8_t width; 
-  const mask_array_t *mask_array;
 } mask_t;
 
 
 """
 
 middle = """
-static const struct {
-    mask_t *const mask;
-    const char *name;
-} mask_table[] = {
+static mask_t *const mask_table[] = {
 """
 
 tail = """\
@@ -38,6 +36,7 @@ def get_vals(path, f):
     text = f.read()
     try:
         vals["name"] = text[text.index("Name: ")+len("Name: "):text.index("\n", text.index("Name: "))]
+        vals["name"] = vals["name"].replace("-", "_")
     except:
         print(f"{path}: error - improper formatting")
         return
@@ -87,11 +86,11 @@ def make_result(masks):
     for mask in masks:
         this_mask = f"""\
 static mask_array_t mask_array_{mask["name"]}[] = {mask["mask_array"]};
-static mask_t mask_{mask["name"]} = {{{mask["height"]}, {mask["width"]}, mask_array_{mask["name"]}}};\n\n"""
+static char mask_name_{mask["name"]}[] = "{mask["name"]}";
+static mask_t mask_{mask["name"]} = {{mask_array_{mask["name"]}, mask_name_{mask["name"]}, {mask["height"]}, {mask["width"]}}};\n\n"""
         mask_string = mask_string + this_mask
 
-        this_table_entry = f"""\
-    {{&mask_{mask["name"]}, "{mask["name"]}"}},\n"""
+        this_table_entry = f"""\t&mask_{mask["name"]},\n""" 
         table_entries = table_entries + this_table_entry
     return head + mask_string + middle + table_entries + tail
 
@@ -112,7 +111,7 @@ def main():
     result = make_result(masks)
     print(result)
 
-    with open(f"output/masks.h", "w+") as f:
+    with open(f"output/mask_patterns.h", "w+") as f:
         f.write(result)
 
     print("See output for results")  # add a verbose mode?
